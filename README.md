@@ -34,3 +34,13 @@ task-planner/
 ## Estado del proyecto
 
 Sprint 1 - Desarrollo de la interfaz de usuario.
+
+## Links
+
+## Link Trello: 
+
+https://trello.com/b/okbpTHfW/app-web-planificador-de-tareas
+
+## Link Figma: 
+
+https://www.figma.com/design/SPwQNxmlScqtU7CWO2iZsp/App-Web-Planificador-de-Tareas?t=LRRthkMgYsJtetej-0
