@@ -130,3 +130,34 @@ nav{
     box-shadow:var(--shadow);
 
 }
+
+/* Task Cards */
+
+.list-group {
+    gap: 12px;
+}
+
+.list-group-item {
+    border: 1px solid var(--border);
+    border-radius: 12px !important;
+    background-color: var(--white);
+    transition: 0.2s ease;
+}
+
+.list-group-item:hover {
+    box-shadow: var(--shadow);
+}
+
+/* Información de las tareas */
+
+.list-group-item h6 {
+    color: var(--text);
+}
+
+.list-group-item p {
+    font-size: 0.9rem;
+}
+
+.list-group-item small {
+    font-size: 0.8rem;
+}
