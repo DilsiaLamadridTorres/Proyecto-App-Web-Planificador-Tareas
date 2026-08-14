@@ -44,3 +44,6 @@ https://trello.com/b/okbpTHfW/app-web-planificador-de-tareas
 ## Link Figma: 
 
 https://www.figma.com/design/SPwQNxmlScqtU7CWO2iZsp/App-Web-Planificador-de-Tareas?t=LRRthkMgYsJtetej-0
+
+## Link GitHub pages
+https://dilsialamadridtorres.github.io/Proyecto-App-Web-Planificador-Tareas/
