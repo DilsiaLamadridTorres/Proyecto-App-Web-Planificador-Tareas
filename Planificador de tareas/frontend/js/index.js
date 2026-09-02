@@ -1,64 +1,44 @@
 const taskManager = new TaskManager();
 
-console.log(taskManager.tasks);
-
-
 const form = document.querySelector('#newTaskForm');
 
 form.addEventListener('submit', function (event) {
-
     event.preventDefault();
 
     const name = document.querySelector('#newTaskNameInput').value;
     const description = document.querySelector('#newTaskDescriptionInput').value;
-    const date = document.querySelector('#newTaskDateInput').value;
+    const dueDate = document.querySelector('#newTaskDateInput').value;
     const status = document.querySelector('#newTaskStatusInput').value;
 
-    console.log('Nombre:', name);
-    console.log('Descripción:', description);
-    console.log('Fecha:', date);
-    console.log('Estado:', status);
-
     const data = {
-    name: name,
-    description: description,
-    date: date,
-    status: status
-};
+        name: name,
+        description: description,
+        date: dueDate,
+        status: status
+    };
 
-const errorMessage = document.querySelector('#formError');
+    const errorMessage = document.querySelector('#formError');
 
-if (validFormFieldInput(data)) {
-    errorMessage.classList.add('d-none');
-} else {
-    errorMessage.classList.remove('d-none');
-}
+    if (validFormFieldInput(data)) {
 
-console.log(validFormFieldInput(data));
+        errorMessage.classList.add('d-none');
 
+        taskManager.addTask(
+            name,
+            description,
+            dueDate,
+            status
+        );
 
-function validFormFieldInput(data) {
+        form.reset();
 
-    if (data.name === "") {
-        return false;
+        console.log(taskManager.tasks);
+
+    } else {
+
+        errorMessage.classList.remove('d-none');
+
     }
-
-    if (data.description === "") {
-        return false;
-    }
-
-    if (data.date === "") {
-        return false;
-    }
-
-    if (data.status === "") {
-        return false;
-    }
-
-    return true;
-}
-
-
 });
 
 const completeButtons = document.querySelectorAll('.complete-task');
@@ -74,4 +54,15 @@ completeButtons.forEach(function (button) {
 
     });
 
+
+
 });
+
+function validFormFieldInput(data) {
+    if (data.name === "") return false;
+    if (data.description === "") return false;
+    if (data.date === "") return false;
+    if (data.status === "") return false;
+
+    return true;
+}
