@@ -60,3 +60,18 @@ function validFormFieldInput(data) {
 
 
 });
+
+const completeButtons = document.querySelectorAll('.complete-task');
+
+completeButtons.forEach(function (button) {
+
+    button.addEventListener('click', function () {
+
+        const taskCard = button.closest('.list-group-item');
+        const taskName = taskCard.querySelector('h6');
+
+        taskName.classList.toggle('text-decoration-line-through');
+
+    });
+
+});
