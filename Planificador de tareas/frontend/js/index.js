@@ -23,7 +23,6 @@ const initialTasks = [
     }
 ];
 
-
 taskManager.load();
 if (taskManager.tasks.length === 0) {
     taskManager.tasks = initialTasks;
@@ -64,10 +63,10 @@ form.addEventListener('submit', function (event) {
         );
 
         taskManager.save();
-taskManager.render();
+        taskManager.render();
 
         form.reset();
-        
+
     } else {
 
         errorMessage.classList.remove('d-none');
@@ -75,29 +74,25 @@ taskManager.render();
     }
 });
 
-
-
-
 const taskList = document.querySelector('#taskList');
 
 taskList.addEventListener('click', function (event) {
 
-if (event.target.classList.contains('done-button')) {
-    const parentTask = event.target.closest('.list-group-item');
-    const taskId = Number(parentTask.dataset.taskId);
+    if (event.target.classList.contains('done-button')) {
+        const parentTask = event.target.closest('.list-group-item');
+        const taskId = Number(parentTask.dataset.taskId);
 
-    const task = taskManager.getTaskById(taskId);
+        const task = taskManager.getTaskById(taskId);
 
+        if (task.status === 'DONE') {
+            task.status = 'PORHACER';
+        } else {
+            task.status = 'DONE';
+        }
 
-    if (task.status === 'DONE') {
-        task.status = 'PORHACER';
-    } else {
-        task.status = 'DONE';
+        taskManager.save();
+        taskManager.render();
     }
-
-    taskManager.save();
-    taskManager.render();
-}
 
     if (event.target.classList.contains('delete-button')) {
 
@@ -106,9 +101,7 @@ if (event.target.classList.contains('done-button')) {
 
         taskManager.deleteTask(taskId);
         taskManager.save();
-    taskManager.render();
-
-
+        taskManager.render();
     }
 
 });

@@ -34,7 +34,6 @@ getTaskById(taskId) {
         if (task.id === taskId) {
             foundTask = task;
         }
-
     }
 
     return foundTask;
@@ -65,16 +64,25 @@ render() {
 }
 
 save() {
-    localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    const tasksJson = JSON.stringify(this.tasks);
+    localStorage.setItem('tasks', tasksJson);
+    const currentId = String(this.currentId);
+    localStorage.setItem('currentId', currentId);
 }
 
 load() {
-    const tasks = localStorage.getItem('tasks');
+    const tasksJson = localStorage.getItem('tasks');
 
-    if (tasks) {
-        this.tasks = JSON.parse(tasks);
+    if (tasksJson) {
+        this.tasks = JSON.parse(tasksJson);
+    }
+
+    const currentId = localStorage.getItem('currentId');
+
+    if (currentId) {
+        this.currentId = Number(currentId);
     }
 }
 
 
-}
+}  
