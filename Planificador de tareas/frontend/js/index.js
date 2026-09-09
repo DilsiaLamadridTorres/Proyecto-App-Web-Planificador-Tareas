@@ -1,4 +1,37 @@
 const taskManager = new TaskManager();
+const initialTasks = [
+    {
+        id: 1,
+        name: 'Estudiar Spring Boot',
+        description: 'Estudiar conceptos básicos de Spring Boot para el desarrollo del backend.',
+        dueDate: '2026-08-12',
+        status: 'PORHACER'
+    },
+    {
+        id: 2,
+        name: 'Diseñar Login',
+        description: 'Crear la interfaz de inicio de sesión para la aplicación.',
+        dueDate: '2026-08-13',
+        status: 'ENPROGRESO'
+    },
+    {
+        id: 3,
+        name: 'Crear API REST',
+        description: 'Crear los endpoints principales de la aplicación.',
+        dueDate: '2026-08-15',
+        status: 'COMPLETADA'
+    }
+];
+
+
+taskManager.load();
+if (taskManager.tasks.length === 0) {
+    taskManager.tasks = initialTasks;
+    taskManager.currentId = initialTasks.length;
+    taskManager.save();
+}
+
+taskManager.render();
 
 const form = document.querySelector('#newTaskForm');
 
@@ -30,10 +63,11 @@ form.addEventListener('submit', function (event) {
             status
         );
 
+        taskManager.save();
+taskManager.render();
+
         form.reset();
-
-        console.log(taskManager.tasks);
-
+        
     } else {
 
         errorMessage.classList.remove('d-none');
@@ -41,20 +75,41 @@ form.addEventListener('submit', function (event) {
     }
 });
 
-const completeButtons = document.querySelectorAll('.complete-task');
-
-completeButtons.forEach(function (button) {
-
-    button.addEventListener('click', function () {
-
-        const taskCard = button.closest('.list-group-item');
-        const taskName = taskCard.querySelector('h6');
-
-        taskName.classList.toggle('text-decoration-line-through');
-
-    });
 
 
+
+const taskList = document.querySelector('#taskList');
+
+taskList.addEventListener('click', function (event) {
+
+if (event.target.classList.contains('done-button')) {
+    const parentTask = event.target.closest('.list-group-item');
+    const taskId = Number(parentTask.dataset.taskId);
+
+    const task = taskManager.getTaskById(taskId);
+
+
+    if (task.status === 'DONE') {
+        task.status = 'PORHACER';
+    } else {
+        task.status = 'DONE';
+    }
+
+    taskManager.save();
+    taskManager.render();
+}
+
+    if (event.target.classList.contains('delete-button')) {
+
+        const parentTask = event.target.closest('.list-group-item');
+        const taskId = Number(parentTask.dataset.taskId);
+
+        taskManager.deleteTask(taskId);
+        taskManager.save();
+    taskManager.render();
+
+
+    }
 
 });
 
