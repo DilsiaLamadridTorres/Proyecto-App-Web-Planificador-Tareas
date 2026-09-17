@@ -1,40 +1,33 @@
 const taskManager = new TaskManager();
-const initialTasks = [
-    {
-        id: 1,
-        name: 'Estudiar Spring Boot',
-        description: 'Estudiar conceptos básicos de Spring Boot para el desarrollo del backend.',
-        dueDate: '2026-08-12',
-        status: 'PORHACER'
-    },
-    {
-        id: 2,
-        name: 'Diseñar Login',
-        description: 'Crear la interfaz de inicio de sesión para la aplicación.',
-        dueDate: '2026-08-13',
-        status: 'ENPROGRESO'
-    },
-    {
-        id: 3,
-        name: 'Crear API REST',
-        description: 'Crear los endpoints principales de la aplicación.',
-        dueDate: '2026-08-15',
-        status: 'COMPLETADA'
-    }
-];
 
-taskManager.load();
-if (taskManager.tasks.length === 0) {
-    taskManager.tasks = initialTasks;
-    taskManager.currentId = initialTasks.length;
-    taskManager.save();
+async function fetchTasks() {
+    try {
+        const response = await fetch('http://localhost:8080/api/tasks');
+
+        if (!response.ok) {
+            throw new Error('Error al obtener las tareas');
+        }
+
+        const tasks = await response.json();
+
+        taskManager.tasks = tasks;
+
+        if (tasks.length > 0) {
+            taskManager.currentId = Math.max(...tasks.map(task => task.id));
+        }
+
+        taskManager.render();
+
+    } catch (error) {
+        console.error('Error al conectar con el backend:', error);
+    }
 }
 
-taskManager.render();
+fetchTasks();
 
 const form = document.querySelector('#newTaskForm');
 
-form.addEventListener('submit', function (event) {
+form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const name = document.querySelector('#newTaskNameInput').value;
@@ -55,17 +48,34 @@ form.addEventListener('submit', function (event) {
 
         errorMessage.classList.add('d-none');
 
-        taskManager.addTask(
-            name,
-            description,
-            dueDate,
-            status
-        );
+     try {
+    const response = await fetch('http://localhost:8080/api/tasks', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description,
+            dueDate: dueDate,
+            status: status
+        })
+    });
 
-        taskManager.save();
-        taskManager.render();
+    if (!response.ok) {
+        throw new Error('Error al crear la tarea');
+    }
 
-        form.reset();
+    const newTask = await response.json();
+
+    taskManager.tasks.push(newTask);
+    taskManager.render();
+
+    form.reset();
+
+} catch (error) {
+    console.error('Error al crear la tarea:', error);
+} 
 
     } else {
 
@@ -76,7 +86,7 @@ form.addEventListener('submit', function (event) {
 
 const taskList = document.querySelector('#taskList');
 
-taskList.addEventListener('click', function (event) {
+taskList.addEventListener('click', async function (event) {
 
     if (event.target.classList.contains('done-button')) {
         const parentTask = event.target.closest('.list-group-item');
@@ -84,25 +94,62 @@ taskList.addEventListener('click', function (event) {
 
         const task = taskManager.getTaskById(taskId);
 
-        if (task.status === 'DONE') {
-            task.status = 'PORHACER';
-        } else {
-            task.status = 'DONE';
+      try {
+    const newStatus = task.status === 'DONE' ? 'PENDING' : 'DONE';
+
+    const response = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: task.name,
+            description: task.description,
+            dueDate: task.dueDate,
+            status: newStatus
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error('Error al actualizar la tarea');
+    }
+
+    const updatedTask = await response.json();
+
+    taskManager.tasks = taskManager.tasks.map(taskItem =>
+        taskItem.id === updatedTask.id ? updatedTask : taskItem
+    );
+
+    taskManager.render();
+
+} catch (error) {
+    console.error('Error al actualizar la tarea:', error);
+}
+
+    }
+
+ if (event.target.classList.contains('delete-button')) {
+
+    const parentTask = event.target.closest('.list-group-item');
+    const taskId = Number(parentTask.dataset.taskId);
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al eliminar la tarea');
         }
 
-        taskManager.save();
+        taskManager.tasks = taskManager.tasks.filter(task => task.id !== taskId);
+
         taskManager.render();
+
+    } catch (error) {
+        console.error('Error al eliminar la tarea:', error);
     }
-
-    if (event.target.classList.contains('delete-button')) {
-
-        const parentTask = event.target.closest('.list-group-item');
-        const taskId = Number(parentTask.dataset.taskId);
-
-        taskManager.deleteTask(taskId);
-        taskManager.save();
-        taskManager.render();
-    }
+}
 
 });
 
